@@ -37,7 +37,7 @@ class SearchingAlgorithms:
                 timer.end()
                 return i
 
-    def lienar_search_graph(self, target: int) -> int:
+    def lienar_search_graph(self, target: int):
         plt.figure(num='Linear Seach')
         b_list = plt.bar(self.x_vals, self.y_vals, color="lightblue")
         plt.title("Linear Search")
@@ -48,7 +48,7 @@ class SearchingAlgorithms:
             if n == target:
                 plt.title(f"A keresett elem indexe: {i}")
                 plt.show()
-                return i
+                return
 
     def binary_search(self, target: int) -> int:
         self.y_vals.sort()
@@ -91,7 +91,7 @@ class SearchingAlgorithms:
                 plt.locator_params(axis="x", integer=True)
                 plt.title(f"A keresett elem indexe: {middle_pointer}")
                 plt.show()
-                return middle_pointer
+                return
             if self.y_vals[middle_pointer] > target:
                 right_pointer = middle_pointer
             else:
@@ -103,14 +103,18 @@ def main():
     dataset = SearchingAlgorithms(y_values)
 
     while True:
-        print("1. Adatok megtekintése\n\
+        print("0. Adatok frissitese\n\
+1. Adatok megtekintése\n\
 2. Linear Search\n\
 3. Binary Search\n\
 4. Linear Search abrazolasa\n\
 5. Binary Search abrazolasa\n\
 9. KILEPES")
         desired_option = int(input("valasz:\t"))
-        if desired_option == 1:
+        if desired_option == 0:
+            y_values = [random.randint(0, 100000) for _ in range(100)]
+            dataset = SearchingAlgorithms(y_values)
+        elif desired_option == 1:
             be_sorted: bool = input("Rendezve legyenek az adatopk? (y/n)\t") == "y"
             dataset.show_data(be_sorted=be_sorted)
         elif desired_option == 2:
@@ -123,10 +127,6 @@ def main():
             dataset.binary_search_graph(y_values[86])
         elif desired_option == 9:
             break
-    # dataset.show_data(be_sorted=True)
-    #
-    # dataset.lienar_search_graph(y_values[86])
-    # dataset.binary_search_graph(y_values[86])
 
 
 if __name__ == "__main__":
