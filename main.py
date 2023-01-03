@@ -1,5 +1,17 @@
+import time
+
 import matplotlib.pyplot as plt
 import random
+
+
+class Timer:
+    def __init__(self):
+        self.start_time = time.perf_counter_ns()
+
+    def end(self):
+        runtime = time.perf_counter_ns() - self.start_time
+        print(f"{runtime} ns")
+        print(f"{runtime*10**-6:.5f} ms")
 
 
 class SearchingAlgorithms:
@@ -19,8 +31,10 @@ class SearchingAlgorithms:
         plt.show()
 
     def linear_search(self, target: int) -> int:
+        timer = Timer()
         for i, n in enumerate(self.y_vals):
             if n == target:
+                timer.end()
                 return i
 
     def lienar_search_graph(self, target: int) -> int:
@@ -39,6 +53,7 @@ class SearchingAlgorithms:
     def binary_search(self, target: int) -> int:
         self.y_vals.sort()
 
+        timer = Timer()
         left_pointer = 0
         right_pointer = len(self.y_vals) - 1
 
@@ -46,6 +61,7 @@ class SearchingAlgorithms:
             middle_pointer = (left_pointer + right_pointer) // 2
 
             if self.y_vals[middle_pointer] == target:
+                timer.end()
                 return middle_pointer
             if self.y_vals[middle_pointer] > target:
                 right_pointer = middle_pointer
@@ -86,10 +102,31 @@ def main():
     y_values = [random.randint(0, 100000) for _ in range(100)]
     dataset = SearchingAlgorithms(y_values)
 
-    dataset.show_data(be_sorted=True)
-
-    dataset.lienar_search_graph(y_values[86])
-    dataset.binary_search_graph(y_values[86])
+    while True:
+        print("1. Adatok megtekintése\n\
+2. Linear Search\n\
+3. Binary Search\n\
+4. Linear Search abrazolasa\n\
+5. Binary Search abrazolasa\n\
+9. KILEPES")
+        desired_option = int(input("valasz:\t"))
+        if desired_option == 1:
+            be_sorted: bool = input("Rendezve legyenek az adatopk? (y/n)\t") == "y"
+            dataset.show_data(be_sorted=be_sorted)
+        elif desired_option == 2:
+            dataset.linear_search(y_values[86])
+        elif desired_option == 3:
+            dataset.binary_search(y_values[86])
+        elif desired_option == 4:
+            dataset.lienar_search_graph(y_values[86])
+        elif desired_option == 5:
+            dataset.binary_search_graph(y_values[86])
+        elif desired_option == 9:
+            break
+    # dataset.show_data(be_sorted=True)
+    #
+    # dataset.lienar_search_graph(y_values[86])
+    # dataset.binary_search_graph(y_values[86])
 
 
 if __name__ == "__main__":
