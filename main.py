@@ -1,132 +1,80 @@
-import time
+"""
+Ezt a fajlt kell futtatni a program futtatasahoz.
 
-import matplotlib.pyplot as plt
+A program a linear és binary search közötti különbségeket mutattja be grafikusan.
+Véletlenszerű adatokkal dolgozik amit a "Create new dataset" gombbal ujra lehet generalni
+A "Show Data" gomb segitsegevel megnezhetjuk az adatokat es a mellette levo checkbox-al eldonthetjuk, hogy ezt rendezett
+vagy rendezetlen formaban tegyuk.
+A "Linear Search" gombbal a linear search algoritmust abrazolja a program, szinten rendezett es rendezetlen formaban
+A "Binary Search" gombbal a binary search algoritmust tudjuk abrazolni, itt nem donthetunk az adatok rendezettsegerol,
+mivel az algoritmus csak rendezett adatokkal mukodik
+A Time Complexity gombbal megtekinthetjuk a worst-case time complexity-et az algoritmusoknak. Ez a linear search eseten
+O(n) ez azt jelenti, hogy egy n darab adatot tartalmazo adathalmazban legfeljebb n lepesre van szuksegunk ahhoz, hogy
+megtalaljuk a keresett elemet.
+A binary search eseten ez O(log(n)), ez azt jelenti hogy egy n nagysagu adathalmaz eseten log(n) lepesre lehet
+legrosszabb esetben szuksegunk a keresett elem megtalalasahoz (a logaritmus 2-es alapu)
+"""
+
+import customtkinter
 import random
+from graphical_search import SearchingAlgorithms
+
+global dataset
+global rnd_target
 
 
-class Timer:
-    def __init__(self):
-        self.start_time = time.perf_counter_ns()
-
-    def end(self):
-        runtime = time.perf_counter_ns() - self.start_time
-        print(f"{runtime} ns")
-        print(f"{runtime*10**-6:.5f} ms")
-
-
-class SearchingAlgorithms:
-
-    def __init__(self, y_vals: list):
-        self.y_vals = y_vals
-        self.x_vals = [i for i in range(len(y_vals))]
-
-    def show_data(self, be_sorted: bool = False):
-        plt.figure(num='Adatok')
-        if be_sorted:
-            plt.bar(self.x_vals, sorted(self.y_vals), color="lightblue")
-            plt.title("Adatok rendezve")
-        else:
-            plt.bar(self.x_vals, self.y_vals, color="lightblue")
-            plt.title("Adatok rendezetlenul")
-        plt.show()
-
-    def linear_search(self, target: int) -> int:
-        timer = Timer()
-        for i, n in enumerate(self.y_vals):
-            if n == target:
-                timer.end()
-                return i
-
-    def lienar_search_graph(self, target: int):
-        plt.figure(num='Linear Seach')
-        b_list = plt.bar(self.x_vals, self.y_vals, color="lightblue")
-        plt.title("Linear Search")
-
-        for i, n in enumerate(self.y_vals):
-            b_list[i].set_color("green")
-            plt.pause(0.1)
-            if n == target:
-                plt.title(f"A keresett elem indexe: {i}")
-                plt.show()
-                return
-
-    def binary_search(self, target: int) -> int:
-        self.y_vals.sort()
-
-        timer = Timer()
-        left_pointer = 0
-        right_pointer = len(self.y_vals) - 1
-
-        while left_pointer < right_pointer:
-            middle_pointer = (left_pointer + right_pointer) // 2
-
-            if self.y_vals[middle_pointer] == target:
-                timer.end()
-                return middle_pointer
-            if self.y_vals[middle_pointer] > target:
-                right_pointer = middle_pointer
-            else:
-                left_pointer = middle_pointer
-
-    def binary_search_graph(self, target: int):
-        self.y_vals.sort()
-
-        left_pointer = 0
-        right_pointer = len(self.y_vals) - 1
-
-        while left_pointer < right_pointer:
-            middle_pointer = (left_pointer + right_pointer) // 2
-
-            plt.figure(num='Binary Search')
-            plt.clf()
-            plt.bar(self.x_vals[left_pointer:right_pointer], self.y_vals[left_pointer:right_pointer], color="lightblue")
-            plt.locator_params(axis="x", integer=True)
-            plt.title("Binary Search")
-            plt.pause(1)
-
-            if self.y_vals[middle_pointer] == target:
-                plt.clf()
-                colors = ["green" if y == target else "lightblue" for y in self.y_vals[left_pointer:right_pointer]]
-                plt.bar(self.x_vals[left_pointer:right_pointer], self.y_vals[left_pointer:right_pointer], color=colors)
-                plt.locator_params(axis="x", integer=True)
-                plt.title(f"A keresett elem indexe: {middle_pointer}")
-                plt.show()
-                return
-            if self.y_vals[middle_pointer] > target:
-                right_pointer = middle_pointer
-            else:
-                left_pointer = middle_pointer
+def new_data():
+    y_vals = [random.randint(0, 100000) for _ in range(100)]
+    global dataset
+    global rnd_target
+    dataset = SearchingAlgorithms(y_vals)
+    rnd_target = random.choice(dataset.y_vals)
 
 
 def main():
-    y_values = [random.randint(0, 100000) for _ in range(100)]
-    dataset = SearchingAlgorithms(y_values)
+    customtkinter.set_appearance_mode("dark")
+    customtkinter.set_default_color_theme("green")
 
-    while True:
-        print("0. Adatok frissitese\n\
-1. Adatok megtekintése\n\
-2. Linear Search\n\
-3. Binary Search\n\
-4. Linear Search abrazolasa\n\
-5. Binary Search abrazolasa\n\
-9. KILEPES")
-        desired_option = int(input("valasz:\t"))
-        if desired_option == 0:
-            y_values = [random.randint(0, 100000) for _ in range(100)]
-            dataset = SearchingAlgorithms(y_values)
-        elif desired_option == 1:
-            be_sorted: bool = input("Rendezve legyenek az adatopk? (y/n)\t") == "y"
-            dataset.show_data(be_sorted=be_sorted)
-        elif desired_option == 2:
-            dataset.linear_search(y_values[86])
-        elif desired_option == 3:
-            dataset.binary_search(y_values[86])
-        elif desired_option == 4:
-            dataset.lienar_search_graph(y_values[86])
-        elif desired_option == 5:
-            dataset.binary_search_graph(y_values[86])
-        elif desired_option == 9:
-            break
+    root = customtkinter.CTk()
+    root.geometry("800x500")
+    root.title("Searching Algorithms")
+    root.iconbitmap("icon.ico")
+
+    new_data()
+
+    label = customtkinter.CTkLabel(master=root, text="Searching Algorithms", font=("Arial", 25))
+    label.pack(pady=50)
+
+    button = customtkinter.CTkButton(master=root, text="Create new dataset",
+                                     command=new_data)
+    button.pack(pady=20)
+
+    showdata_checkbox = customtkinter.CTkCheckBox(master=root, text="sorted", font=("Arial", 16),
+                                                  onvalue=True, offvalue=False)
+    showdata_checkbox.place(x=450, y=200)
+
+    button = customtkinter.CTkButton(master=root, text="Show Data",
+                                     command=lambda: dataset.show_data(be_sorted=showdata_checkbox.get()))
+    button.place(x=250, y=200)
+
+    linearsearch_checkbox = customtkinter.CTkCheckBox(master=root, text="sorted", font=("Arial", 16),
+                                                      onvalue=True, offvalue=False)
+    linearsearch_checkbox.place(x=450, y=250)
+
+    button = customtkinter.CTkButton(master=root, text="Linear Search",
+                                     command=lambda: dataset.lienar_search_graph(rnd_target,
+                                                                                 be_sorted=linearsearch_checkbox.get()))
+    button.place(x=250, y=250)
+
+    button = customtkinter.CTkButton(master=root, text="Binary Search",
+                                     command=lambda: dataset.binary_search_graph(rnd_target))
+    button.place(x=330, y=300)
+
+    timecomplexity_button = customtkinter.CTkButton(master=root, text="Time Complexity",
+                                                    command=SearchingAlgorithms.show_time_complexity)
+    timecomplexity_button.place(x=330, y=350)
+
+    root.mainloop()
 
 
 if __name__ == "__main__":
